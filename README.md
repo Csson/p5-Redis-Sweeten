@@ -1,8 +1,8 @@
 # NAME
 
-Redis::Sweeten - Short intro
+Redis::Fast::Sweeten - ...
 
-![Requires Perl unknown](https://img.shields.io/badge/perl-unknown-brightgreen.svg) [![Travis status](https://api.travis-ci.org//.svg?branch=master)](https://travis-ci.org//)
+![Requires Perl 5.16](https://img.shields.io/badge/perl-5.16-brightgreen.svg) [![Travis status](https://api.travis-ci.org/Csson/p5-Redis-Sweeten.svg?branch=master)](https://travis-ci.org/Csson/p5-Redis-Sweeten)
 
 # VERSION
 
@@ -10,11 +10,11 @@ Version 0.0001, released 2015-11-17.
 
 # SYNOPSIS
 
-    use Redis::Sweeten;
+    use Redis::Fast::Sweeten;
 
 # DESCRIPTION
 
-Redis::Sweeten is ...
+Redis::Fast::Sweeten is ...
 
 # SEE ALSO
 
