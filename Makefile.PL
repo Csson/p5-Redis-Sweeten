@@ -16,7 +16,17 @@ my %WriteMakefileArgs = (
   "LICENSE" => "perl",
   "MIN_PERL_VERSION" => "5.016000",
   "NAME" => "Redis::Sweeten",
-  "PREREQ_PM" => {},
+  "PREREQ_PM" => {
+    "Class::Method::Modifiers" => 0,
+    "Mojolicious" => 0,
+    "Moose::Role" => 0,
+    "MooseX::AttributeShortcuts" => "0.028",
+    "Redis::Fast" => 0,
+    "Try::Tiny" => "0.24",
+    "Types::Standard" => "1.000005",
+    "experimental" => 0,
+    "namespace::autoclean" => "0.22"
+  },
   "TEST_REQUIRES" => {
     "ExtUtils::MakeMaker" => 0,
     "File::Spec" => 0,
@@ -32,11 +42,20 @@ my %WriteMakefileArgs = (
 
 
 my %FallbackPrereqs = (
+  "Class::Method::Modifiers" => 0,
   "ExtUtils::MakeMaker" => 0,
   "File::Spec" => 0,
   "IO::Handle" => 0,
   "IPC::Open3" => 0,
-  "Test::More" => "0.96"
+  "Mojolicious" => 0,
+  "Moose::Role" => 0,
+  "MooseX::AttributeShortcuts" => "0.028",
+  "Redis::Fast" => 0,
+  "Test::More" => "0.96",
+  "Try::Tiny" => "0.24",
+  "Types::Standard" => "1.000005",
+  "experimental" => 0,
+  "namespace::autoclean" => "0.22"
 );
 
 
