@@ -2,9 +2,10 @@ use 5.20.0;
 use strict;
 use warnings;
 
-package Redis::Sweeten {
+package Redis::Sweeten;
 
-    # ABSTRACT: ...
+our $VERSION = '0.0100';
+# ABSTRACT: ...
 
     use Moose::Role;
     use MooseX::AttributeShortcuts;
@@ -95,7 +96,7 @@ package Redis::Sweeten {
     sub del($self, $key) {
         return $self->redis->del($key);
     }
-}
+
 
 1;
 

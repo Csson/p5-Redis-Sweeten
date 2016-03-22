@@ -1,12 +1,19 @@
 # NAME
 
-Redis::Fast::Sweeten - ...
+Redis::Sweeten - ...
 
-![Requires Perl 5.16](https://img.shields.io/badge/perl-5.16-brightgreen.svg) [![Travis status](https://api.travis-ci.org/Csson/p5-Redis-Sweeten.svg?branch=master)](https://travis-ci.org/Csson/p5-Redis-Sweeten)
+<div>
+    <p>
+    <img src="https://img.shields.io/badge/perl-5.16+-blue.svg" alt="Requires Perl 5.16+" />
+    <a href="https://travis-ci.org//"><img src="https://api.travis-ci.org//.svg?branch=master" alt="Travis status" /></a>
+    <a href="http://cpants.cpanauthors.org/dist/Redis-Sweeten-0.0101"><img src="https://badgedepot.code301.com/badge/kwalitee/Redis-Sweeten/0.0101" alt="Distribution kwalitee" /></a>
+    <a href="http://matrix.cpantesters.org/?dist=Redis-Sweeten%200.0101"><img src="https://badgedepot.code301.com/badge/cpantesters/Redis-Sweeten/0.0101" alt="CPAN Testers result" /></a>
+    </p>
+</div>
 
 # VERSION
 
-Version 0.0001, released 2015-11-17.
+Version 0.0101, released 2016-03-22.
 
 # SYNOPSIS
 
@@ -17,14 +24,6 @@ Version 0.0001, released 2015-11-17.
 Redis::Fast::Sweeten is ...
 
 # SEE ALSO
-
-# SOURCE
-
-[https://github.com/Csson/p5-Redis-Sweeten](https://github.com/Csson/p5-Redis-Sweeten)
-
-# HOMEPAGE
-
-[https://metacpan.org/release/Redis-Sweeten](https://metacpan.org/release/Redis-Sweeten)
 
 # AUTHOR
 

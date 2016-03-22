@@ -1,50 +1,65 @@
-use strict;
+use 5.20.0;
 use warnings;
 
-package Mojolicious::Plugin::DbicSchemaViewer {
+package Mojolicious::Plugin::RedisHandler;
 
-    # VERSION:
-    # ABSTRACT: ...
+our $VERSION = '0.0100';
+# ABSTRACT: ...
 
     use Mojo::Base 'Mojolicious::Plugin';
-    use Moose::Role;
-    use MooseX::AttributeShortcuts;
+    use Class::Method::Modifiers;
     use Types::Standard -types;
     use Redis::Fast;
     use Encode;
+    use MIME::Base64 qw/encode_base64 decode_base64/;
     use Try::Tiny;
     use namespace::autoclean;
     use experimental qw/postderef signatures/;
 
-    has actual => (
-        is => 'rw',
-        lazy => 1,
-        builder => 1,
-        clearer => 1,
-        predicate => 1,
-    );
-    has not_connected_since => (
-        is => 'rw',
-        isa => Int,
-        init_arg => 1,
-        clearer => 1,
-        predicate => 1,
-    );
-    has attempt_reconnect_every => (
-        is => 'ro',
-        isa => Int,
-        default => 15,
-    );
+    has not_connected_since => undef;
+    has attempt_reconnect_every => 15;
+    has prefix => undef;
+    has separator => ':';
+    has database => 0;
+    has connection_name => undef;
+    has default_expiry => 900;
+    has server => undef;
+    has actual => undef;
 
     sub register($self, $app, $conf) {
-        warn ref $self;
+        if(!exists $conf->{'server'}) {
+            die "M::P::RedisHandler: mandatory configuration 'server' is missing";
+        }
+        $self->server($conf->{'server'});
 
+        if(exists $conf->{'attempt_reconnect_every'}) {
+            if($conf->{'attempt_reconnect_every'} =~ m{\D} || $conf->{'attempt_reconnect_every'} < 0) {
+                die "M::P::RedisHandler: mandatory configuration 'attempt_reconnect_every' must be non-negative integer (was $conf->{'attempt_reconnect_every'})";
+            }
+            $self->attempt_reconnect_every($conf->{'attempt_reconnect_every'});
+        }
+
+        if(exists $conf->{'prefix'}) {
+            $self->prefix($conf->{'prefix'});
+        }
+        if(exists $conf->{'connection_name'}) {
+            $self->connection_name($conf->{'connection_name'});
+        }
+        if(exists $conf->{'default_expiry'}) {
+            $self->default_expiry($conf->{'default_expiry'});
+        }
+        if(exists $conf->{'separator'}) {
+            $self->separator($conf->{'separator'});
+        }
+        $self->database($conf->{'database'});
+
+        $self->actual($self->_build_redis);
+
+        my $handler_name = $conf->{'helper'} || 'redis';
+        $app->helper($handler_name => sub { $self });
+
+        return $self;
     }
-
-
-    requires qw/server prefix default_expiry/;
-
-    sub connection_name($self) { $self->prefix }
 
     sub _build_redis($self) {
         my $redis;
@@ -56,37 +71,38 @@ package Mojolicious::Plugin::DbicSchemaViewer {
     };
 
     around [qw/get get_utf8 set setex del/] => sub ($next, $self, $key, @args) {
-        if(time - $self->has_not_connected_since > $self->attempt_reconnect_every) {
+        warn ">>$key";
+        if(!defined $self->actual && defined $self->not_connected_since && time - $self->not_connected_since > $self->attempt_reconnect_every) {
+            $self->actual($self->_build_redis);
 
-            $self->not_connected_since(time);
-
-            if(!$self->has_redis) {
-                $self->redis($self->_build_redis);
-
-                if(defined $self->redis && $self->redis->ping) {
-                    $self->clear_not_connected_since;
-                }
+            if(defined $self->actual && $self->actual->ping) {
+                $self->not_connected_since(undef);
+            }
+            else {
+                $self->not_connected_since(time);
             }
         }
-        $key = join '.' => ($self->prefix, $key);
+
+        $key = encode_base64 join ('.' => (defined $self->prefix ? $self->prefix : (), $key)), '';
         try {
-            $self->$next($key, @args);
+            return $self->$next($key, @args);
         }
         catch {
-            $self->clear_redis;
+            warn 'catched!' . $_;
             $self->not_connected_since(time);
+            $self->actual(undef);
             return undef;
         };
     };
 
     sub get_utf8($self, $key) {
-        return decode('UTF-8', $self->redis->get($key));
+        return decode('UTF-8', $self->actual->get($key));
     }
     sub get($self, $key) {
-        return $self->redis->get($key);
+        return $self->actual->get($key);
     }
     sub set($self, $key, $value) {
-        return $self->redis->set($key, $value);
+        return $self->actual->set($key, $value);
     }
 
     # @data can be 1 or 2: the last item is always the value.
@@ -96,15 +112,14 @@ package Mojolicious::Plugin::DbicSchemaViewer {
         my $value = pop @data;
         my $expiry = pop @data || $self->default_expiry;
 
-        return $self->redis->setex($key, $expiry, $value);
+        return $self->actual->setex($key, $expiry, $value);
     }
 
     sub del($self, $key) {
-        return $self->redis->del($key);
+        return $self->actual->del($key);
     }
 
 
-}
 
 1;
 
@@ -114,11 +129,11 @@ __END__
 
 =head1 SYNOPSIS
 
-    use Mojolicious::Plugin::DbicSchemaViewer;
+    use Mojolicious::Plugin::RedisHandler;
 
 =head1 DESCRIPTION
 
-Redis::Fast::Sweeten is ...
+Mojolicious::Plugin::RedisHandler is ...
 
 =head1 SEE ALSO
 
