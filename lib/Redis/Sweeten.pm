@@ -4,7 +4,7 @@ use warnings;
 
 package Redis::Sweeten;
 
-our $VERSION = '0.0100';
+our $VERSION = '0.0102';
 # ABSTRACT: ...
 
     use Moose::Role;

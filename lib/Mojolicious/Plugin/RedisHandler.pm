@@ -3,7 +3,7 @@ use warnings;
 
 package Mojolicious::Plugin::RedisHandler;
 
-our $VERSION = '0.0100';
+our $VERSION = '0.0102';
 # ABSTRACT: ...
 
     use Mojo::Base 'Mojolicious::Plugin';
