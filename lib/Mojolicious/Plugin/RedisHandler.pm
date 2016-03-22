@@ -1,11 +1,12 @@
-use 5.20.0;
 use strict;
 use warnings;
 
-package Redis::Sweeten {
+package Mojolicious::Plugin::DbicSchemaViewer {
 
+    # VERSION:
     # ABSTRACT: ...
 
+    use Mojo::Base 'Mojolicious::Plugin';
     use Moose::Role;
     use MooseX::AttributeShortcuts;
     use Types::Standard -types;
@@ -15,7 +16,7 @@ package Redis::Sweeten {
     use namespace::autoclean;
     use experimental qw/postderef signatures/;
 
-    has redis => (
+    has actual => (
         is => 'rw',
         lazy => 1,
         builder => 1,
@@ -34,6 +35,12 @@ package Redis::Sweeten {
         isa => Int,
         default => 15,
     );
+
+    sub register($self, $app, $conf) {
+        warn ref $self;
+
+    }
+
 
     requires qw/server prefix default_expiry/;
 
@@ -95,6 +102,8 @@ package Redis::Sweeten {
     sub del($self, $key) {
         return $self->redis->del($key);
     }
+
+
 }
 
 1;
@@ -105,7 +114,7 @@ __END__
 
 =head1 SYNOPSIS
 
-    use Redis::Fast::Sweeten;
+    use Mojolicious::Plugin::DbicSchemaViewer;
 
 =head1 DESCRIPTION
 
