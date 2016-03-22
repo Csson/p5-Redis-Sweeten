@@ -13,6 +13,15 @@ prereqs:
   runtime:
     requires:
       - perl: 5.016000
+      - Class::Method::Modifiers
+      - Mojolicious
+      - Moose::Role
+      - MooseX::AttributeShortcuts
+      - Redis::Fast
+      - Try::Tiny
+      - Types::Standard
+      - experimental
+      - namespace::autoclean
 
 plugins:
   - +config: Author::CSSON
